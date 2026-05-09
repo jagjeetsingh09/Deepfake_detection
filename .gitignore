@@ -1,0 +1,26 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Environment
+.env
+
+# Upload folders
+backend/static/uploads/
+backend/static/frames/
+
+# VS Code
+.vscode/
+
+# Build folders
+dist/
+build/
+
+# ML Models
+*.pt
+*.pth
+*.dat
