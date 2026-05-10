@@ -22,7 +22,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
-
+import gdown
 from app.core.config import (
     DEVICE,
     FEATURE_DIM,
@@ -100,6 +100,21 @@ class VideoDetectionModel(nn.Module):
 # ─────────────────────────────────────────────────────────────────────────────
 # Startup: Load
 # ─────────────────────────────────────────────────────────────────────────────
+def download_model_if_needed() -> None:
+    """Download model from Google Drive if not present locally."""
+    if not os.path.exists(MODEL_PATH):
+        log.info("Model file not found at '%s'. Downloading from Google Drive...", MODEL_PATH)
+        os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+        gdown.download(
+            id="1dpZQ4h2c8pUkJrP7Dz-uXTiedx2klM4W",
+            output=MODEL_PATH,
+            quiet=False,
+        )
+        log.info("Model downloaded successfully to '%s'.", MODEL_PATH)
+    else:
+        log.info("Model file found at '%s'. Skipping download.", MODEL_PATH)
+
+
 
 def load_model() -> None:
     """
@@ -112,7 +127,7 @@ def load_model() -> None:
     global MODEL, MODEL_STATUS, LOADING_ERROR
 
     log.info("Loading deepfake detection model from '%s' ...", MODEL_PATH)
-
+    download_model_if_needed()
     try:
         model = VideoDetectionModel(num_classes=NUM_CLASSES)
         state_dict = torch.load(MODEL_PATH, map_location=DEVICE)

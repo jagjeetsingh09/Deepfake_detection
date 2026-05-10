@@ -1,8 +1,9 @@
 import logging
+import os 
 from typing import FrozenSet
 
 import torch
-
+'''
 # ── Upload settings ───────────────────────────────────────────────────────────
 UPLOAD_DIR: str = "static/uploads"
 FRAMES_DIR: str = "static/frames"          # debug frame snapshots land here
@@ -11,6 +12,27 @@ MAX_UPLOAD_MB: int = 500                   # hard limit on incoming file size
 
 # ── Model checkpoint ──────────────────────────────────────────────────────────
 MODEL_PATH: str = "Saved Models/models/Pytorch/model_90.pt"
+'''
+# ── Base directory (absolute — works on any server) ───────────────────────────
+BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# ── Upload settings ───────────────────────────────────────────────────────────
+UPLOAD_DIR: str = os.path.join(BASE_DIR, "static", "uploads")
+FRAMES_DIR: str = os.path.join(BASE_DIR, "static", "frames")
+ALLOWED_EXTENSIONS: FrozenSet[str] = frozenset({"mp4", "mov", "avi"})
+MAX_UPLOAD_MB: int = 500
+
+# Auto-create folders on server startup
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(FRAMES_DIR, exist_ok=True)
+
+# ── Model checkpoint ──────────────────────────────────────────────────────────
+MODEL_PATH: str = os.path.join(BASE_DIR, "Saved Models", "models", "Pytorch", "model_90.pt")
+
+# Auto-create model folder
+os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+
+
 
 # ── Model architecture constants ──────────────────────────────────────────────
 SEQUENCE_LENGTH: int = 20       # frames sampled per video
@@ -24,10 +46,11 @@ DEVICE: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cp
 
 # ── Feature flags ─────────────────────────────────────────────────────────────
 SAVE_DEBUG_FRAMES: bool = True             # write sampled frames to FRAMES_DIR
-WARMUP_ENABLED: bool = True                # run dummy inference after model load
+WARMUP_ENABLED: bool = False                # run dummy inference after model load
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 LOG_LEVEL: int = logging.DEBUG
+LOG_LEVEL: int = logging.INFO  # DEBUG is too verbose for production
 LOG_FORMAT: str = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
 LOG_DATE_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 

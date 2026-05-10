@@ -8,6 +8,7 @@ node_modules/
 
 # Environment
 .env
+*.local
 
 # Upload folders
 backend/static/uploads/
@@ -24,3 +25,7 @@ build/
 *.pt
 *.pth
 *.dat
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
@@ -12,6 +13,7 @@ from app.core.config import (
     API_DESCRIPTION,
     API_TITLE,
     API_VERSION,
+    BASE_DIR,  
     LOG_DATE_FORMAT,
     LOG_FORMAT,
     LOG_LEVEL,
@@ -93,8 +95,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -103,7 +105,13 @@ app.add_middleware(
 # Static files + routers
 # ─────────────────────────────────────────────────────────────────────────────
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+#app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.join(BASE_DIR, "static")),
+    name="static"
+)
 app.include_router(prediction_router)
 app.include_router(system_router)
